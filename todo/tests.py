@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.urls import reverse
 from django.test import TestCase, Client
 
+from todo.forms import TaskForm
 from todo.models import Task
 
 
@@ -59,7 +60,7 @@ class TestIndexView(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
-    def test_context(self):
+    def test_tasks_in_context(self):
         """Tests the context contains queryset of tasks"""
         response = self.client.get(self.url)
 
@@ -70,12 +71,26 @@ class TestIndexView(TestCase):
         self.assertTrue(isinstance(tasks, QuerySet))
         self.assertEqual(tasks.first(), self.task)
 
+    def test_form_in_context(self):
+        """Test that a form is sent to the user"""
+        response = self.client.get(self.url)
+
+        self.assertIn("form", response.context)
+        self.assertTrue(isinstance(response.context["form"], TaskForm))
+
     def test_template_used(self):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, "temp_index.html")
 
+    def test_post_request(self):
+        form_data = {"name": "Do something"}
 
-from todo.forms import TaskForm
+        self.assertFalse(Task.objects.filter(name="Do something").exists())
+
+        response = self.client.post(self.url, form_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Task.objects.filter(name="Do something").exists())
 
 
 class TestTaskForm(TestCase):
