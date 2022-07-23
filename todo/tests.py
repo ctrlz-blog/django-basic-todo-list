@@ -73,3 +73,24 @@ class TestIndexView(TestCase):
     def test_template_used(self):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, "temp_index.html")
+
+
+from todo.forms import TaskForm
+
+
+class TestTaskForm(TestCase):
+    def test_form_instance(self):
+        """Test that form has name field"""
+        form = TaskForm()
+
+        self.assertIn("name", form.fields)
+
+    def test_is_valid(self):
+        form = TaskForm(data={"name": "Book dentist appointment"})
+
+        self.assertTrue(form.is_valid())
+
+    def test_empty_form_invalid(self):
+        form = TaskForm(data={"name": None})
+
+        self.assertFalse(form.is_valid())
