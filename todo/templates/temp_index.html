@@ -1,5 +1,11 @@
 <h1>To Do List</h1>
 
+<form method="post">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="Add">
+</form>
+
 <table>
     <thead>
         <th>Name</th>
