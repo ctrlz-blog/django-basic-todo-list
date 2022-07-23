@@ -12,5 +12,11 @@ django==4.0.6
     # via -r requirements.in
 django-environ==0.9.0
     # via -r requirements.in
+faker==13.15.1
+    # via -r requirements.in
+python-dateutil==2.8.2
+    # via faker
+six==1.16.0
+    # via python-dateutil
 sqlparse==0.4.2
     # via django
