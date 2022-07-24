@@ -41,3 +41,13 @@ def update_task_status(
     success_url = reverse("index")
 
     return HttpResponseRedirect(success_url)
+
+
+def delete_task(request: HttpRequest, task_id: int) -> HttpResponse:
+
+    task = get_object_or_404(Task, id=task_id)
+    task.delete()
+
+    success_url = reverse("index")
+
+    return HttpResponseRedirect(success_url)
