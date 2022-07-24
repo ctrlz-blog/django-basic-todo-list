@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="text-center my-5">To Do List</h1>
+
+<form class="w-50 mx-auto mb-5 d-flex" id="todo-form" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input class="btn btn-primary mx-1 border" type="submit" value="Add">
+</form>
+
+
+<section class="card p-4">
+
+    <ul id="tabs" class="nav nav-pills mb-4 pb-2">
+        <li class="nav-item">
+            <a class="nav-link active" href="#">All</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link">To Do</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link">Doing</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link">Done</a>
+        </li>
+    </ul>
+
+    <section id="todo-list">
+        {% include 'partials/todo_list.html' %}
+    </section>
+
+</section>
+
+{% endblock %}

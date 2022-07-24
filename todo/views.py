@@ -15,6 +15,6 @@ def index(request: HttpRequest) -> HttpResponse:
     form = TaskForm()
     tasks = Task.objects.all().order_by("-created")
 
-    context = {"tasks": tasks, "form": form}
+    context = {"tasks": tasks, "form": form, "Status": Task.StatusChoice}
 
-    return render(request, "temp_index.html", context)
+    return render(request, "index.html", context)
