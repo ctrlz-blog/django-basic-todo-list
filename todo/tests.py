@@ -80,7 +80,7 @@ class TestIndexView(TestCase):
 
     def test_template_used(self):
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, "temp_index.html")
+        self.assertTemplateUsed(response, "index.html")
 
     def test_post_request(self):
         form_data = {"name": "Do something"}
@@ -91,6 +91,54 @@ class TestIndexView(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Task.objects.filter(name="Do something").exists())
+
+
+class TestUpdateView(TestCase):
+    def setUp(self):
+        self.task = Task.objects.create(
+            name="Book dentist appointment", status=Task.StatusChoice.TODO
+        )
+        self.client = Client()
+
+    def test_task_status_update(self):
+        """Test the view updates the status of the task"""
+        self.url = reverse("update_status", args=[self.task.id, Task.StatusChoice.DONE])
+
+        self.assertEqual(self.task.status, Task.StatusChoice.TODO)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 302)
+
+        self.task.refresh_from_db()
+
+        self.assertEqual(self.task.status, Task.StatusChoice.DONE)
+
+    def test_task_status_update_raise_404(self):
+        """Test a 404 is raised if attempts to update a task that doesn't exist"""
+
+        bad_id = 999
+        self.assertFalse(Task.objects.filter(id=bad_id).exists())
+
+        url = reverse("update_status", args=[bad_id, Task.StatusChoice.DOING])
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_task_status_update_bad_request(self):
+        """Test a Bad Request is raised if user attempts to update status to a value
+        that isn't one of the status choices"""
+
+        invalid_status = "Not one of the choices"
+
+        self.assertNotIn(invalid_status, Task.StatusChoice.values)
+
+        url = reverse("update_status", args=[self.task.id, invalid_status])
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 400)
 
 
 class TestTaskForm(TestCase):
