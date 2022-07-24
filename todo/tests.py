@@ -141,6 +141,38 @@ class TestUpdateView(TestCase):
         self.assertEqual(response.status_code, 400)
 
 
+class TestDeleteTaskView(TestCase):
+    def setUp(self):
+        self.task = Task.objects.create(name="Book dentist appointment")
+        self.client = Client()
+
+    def test_delete_task(self):
+        url = reverse("delete", args=[self.task.id])
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_delete_task_deletes_task(self):
+        url = reverse("delete", args=[self.task.id])
+
+        self.assertEqual(Task.objects.count(), 1)
+
+        self.client.get(url)
+
+        self.assertEqual(Task.objects.count(), 0)
+
+    def test_delete_task_raises_404(self):
+        bad_id = 999
+        self.assertFalse(Task.objects.filter(id=bad_id).exists())
+
+        url = reverse("delete", args=[bad_id])
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
+
+
 class TestTaskForm(TestCase):
     def test_form_instance(self):
         """Test that form has name field"""
