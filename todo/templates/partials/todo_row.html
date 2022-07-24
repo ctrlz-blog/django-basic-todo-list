@@ -12,19 +12,19 @@
         {% if task.status == Status.TODO %}
         <div class="btn btn-danger border">To Do</div>
         {% else %}
-        <a class="btn btn-light border">To Do</a>
+        <a class="btn btn-light border" href="{% url 'update_status' task.id Status.TODO %}">To Do</a>
         {% endif %}
 
         {% if task.status == Status.DOING %}
         <div class="btn btn-primary border">Doing</div>
         {% else %}
-        <a class="btn btn-light border">Doing</a>
+        <a class="btn btn-light border" href="{% url 'update_status' task.id Status.DOING %}">Doing</a>
         {% endif %}
 
         {% if task.status == Status.DONE %}
         <div class="btn btn-success border">Done</div>
         {% else %}
-        <a class="btn btn-light border">Done</a>
+        <a class="btn btn-light border" href="{% url 'update_status' task.id Status.DONE %}">Done</a>
         {% endif %}
 
     </td>
