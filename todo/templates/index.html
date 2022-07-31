@@ -14,16 +14,21 @@
 
     <ul id="tabs" class="nav nav-pills mb-4 pb-2">
         <li class="nav-item">
-            <a class="nav-link active" href="#">All</a>
+            <a class="nav-link {% if filter_choice == 'ALL' %}active{% endif %}" href="{% url 'index' %}">
+                All
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link">To Do</a>
+            <a class="nav-link {% if filter_choice == Status.TODO %}active{% endif %}"
+                href="{% url 'filter' Status.TODO %}">To Do</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link">Doing</a>
+            <a class="nav-link {% if filter_choice == Status.DOING %}active{% endif %}"
+                href="{% url 'filter' Status.DOING %}">Doing</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link">Done</a>
+            <a class="nav-link {% if filter_choice == Status.DONE %}active{% endif %}"
+                href="{% url 'filter' Status.DONE %}">Done</a>
         </li>
     </ul>
 
