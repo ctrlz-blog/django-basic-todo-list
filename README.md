@@ -1,5 +1,5 @@
-# django-htmx-todo
-A simple to-do list app built with Django and htmx
+# Django To do
+A simple to-do list app built with Django
 
 ### How to use this repository
 
