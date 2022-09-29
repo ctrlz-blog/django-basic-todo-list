@@ -78,6 +78,11 @@ class TestIndexView(TestCase):
         self.assertIn("form", response.context)
         self.assertTrue(isinstance(response.context["form"], TaskForm))
 
+    def test_filter_choice_in_context(self):
+        response = self.client.get(self.url)
+        self.assertIn("filter_choice", response.context)
+        self.assertEqual(response.context["filter_choice"], "ALL")
+
     def test_template_used(self):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, "index.html")
@@ -171,6 +176,53 @@ class TestDeleteTaskView(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 404)
+
+
+class TestFilterView(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.url = reverse("filter", args=[Task.StatusChoice.TODO])
+
+    def test_status_code(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_filter_choice(self):
+        response = self.client.get(self.url)
+
+        self.assertIn("filter_choice", response.context)
+        self.assertEqual(response.context["filter_choice"], Task.StatusChoice.TODO)
+
+    def test_form_in_context(self):
+        response = self.client.get(self.url)
+
+        self.assertIn("form", response.context)
+        self.assertIsInstance(response.context["form"], TaskForm)
+
+    def test_post_request(self):
+        form_data = {"name": "Do something"}
+
+        self.assertFalse(Task.objects.filter(name="Do something").exists())
+
+        response = self.client.post(self.url, form_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Task.objects.filter(name="Do something").exists())
+
+    def test_tasks(self):
+        task = Task.objects.create(name="Book dentists appointment")
+        finished_task = Task.objects.create(name="Buy milk", status="Done")
+        response = self.client.get(self.url)
+
+        self.assertIn("tasks", response.context)
+
+        tasks = response.context["tasks"]
+
+        self.assertIsInstance(tasks, QuerySet)
+
+        self.assertIn(task, tasks)
+        self.assertNotIn(finished_task, tasks)
 
 
 class TestTaskForm(TestCase):
